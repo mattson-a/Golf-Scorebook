@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Golf Scorebook</string>
+    <string name="new_round">New Round</string>
+    <string name="view_rounds">View Rounds</string>
+    <string name="view_statistics">View Statistics</string>
+    <string name="default_course">Royal St. Patrick\'s Golf Links</string>
+    <string name="default_tees">Purple</string>
+    <string name="create_round">Create Round</string>
+</resources>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/LandingFragment">
+
+    <fragment
+        android:id="@+id/LandingFragment"
+        android:name="edu.msoe.mattsona.fragments.LandingFragment">
+        <action
+            android:id="@+id/createNewRound"
+            app:destination="@id/NewRoundFragment" />
+        <action
+            android:id="@+id/viewRounds"
+            app:destination="@id/ViewRoundsFragment" />
+        <action
+            android:id="@+id/viewStats"
+            app:destination="@id/ViewStatsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/NewRoundFragment"
+        android:name="edu.msoe.mattsona.fragments.NewRoundFragment" >
+        <action
+            android:id="@+id/goToRoundScoring"
+            app:destination="@id/RoundScoringFragment" />
+        <action
+            android:id="@+id/returnToLanding"
+            app:destination="@id/LandingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/ViewRoundsFragment"
+        android:name="edu.msoe.mattsona.fragments.ViewRoundsFragment" />
+    <fragment
+        android:id="@+id/ViewStatsFragment"
+        android:name="edu.msoe.mattsona.fragments.ViewStatsFragment" />
+    <fragment
+        android:id="@+id/RoundScoringFragment"
+        android:name="edu.msoe.mattsona.fragments.RoundScoringFragment" >
+        <argument
+            android:name="roundId"
+            app:argType="java.util.UUID" />
+    </fragment>
+</navigation>
