@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import edu.msoe.mattsona.entities.Round
-import java.util.UUID
 
 @Dao
 interface RoundDao {
@@ -13,11 +12,14 @@ interface RoundDao {
     suspend fun getAllRounds(): List<Round>
 
     @Query("select * from round where id=(:id)")
-    suspend fun getRound(id: UUID): Round
+    suspend fun getRound(id: Long): Round
 
     @Query("select * from round where courseId=(:courseId)")
-    suspend fun getAllRoundsFromCourse(courseId: UUID): List<Round>
+    suspend fun getAllRoundsFromCourse(courseId: Long): List<Round>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRound(round: Round)
+    suspend fun insertRound(round: Round): Long
+
+    @Query("delete from round")
+    suspend fun deleteAllRounds()
 }

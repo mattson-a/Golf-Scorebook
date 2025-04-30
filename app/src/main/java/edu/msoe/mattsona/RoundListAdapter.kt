@@ -7,21 +7,27 @@ import edu.msoe.mattsona.databinding.ListItemRoundBinding
 import edu.msoe.mattsona.entities.Round
 import java.text.SimpleDateFormat
 import java.util.Locale
-import java.util.UUID
 
 class RoundHolder(
     private val binding: ListItemRoundBinding
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(round: Round, courseName: String) {
-        val dateFormat = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+        //if (round != null) {
+        val dateFormat = SimpleDateFormat("M/d/yyyy", Locale.getDefault())
+
         val detailText = "$courseName | ${dateFormat.format(round.date)} | ${round.holes} Holes"
         binding.roundDetails.text = detailText
+        /*} else {
+            //no rounds, give appropriate message
+            val detailText = "No Rounds Found. Create a New Round First!"
+            binding.roundDetails.text = detailText
+        }*/
     }
 }
 
 class RoundListAdapter(
     private val rounds: List<Round>,
-    private val coursesMap: Map<UUID, String>
+    private val coursesMap: Map<Long, String>
 ) : RecyclerView.Adapter<RoundHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoundHolder {
@@ -31,9 +37,14 @@ class RoundListAdapter(
     }
 
     override fun onBindViewHolder(holder: RoundHolder, position: Int) {
-        val round = rounds[position]
-        val course = coursesMap[round.courseId]
-        holder.bind(round, course!!)
+        if (rounds.isNotEmpty()) {
+            val round = rounds[position]
+            val course = coursesMap[round.courseId]
+            holder.bind(round, course!!)
+        }/* else {
+            //no rounds
+            holder.bind(null, "")
+        }*/
     }
 
     override fun getItemCount() = rounds.size

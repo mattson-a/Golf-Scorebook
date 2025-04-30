@@ -24,9 +24,6 @@
         <action
             android:id="@+id/goToRoundScoring"
             app:destination="@id/RoundScoringFragment" />
-        <action
-            android:id="@+id/returnToLanding"
-            app:destination="@id/LandingFragment" />
     </fragment>
     <fragment
         android:id="@+id/ViewRoundsFragment"
@@ -39,6 +36,9 @@
         android:name="edu.msoe.mattsona.fragments.RoundScoringFragment" >
         <argument
             android:name="roundId"
-            app:argType="java.util.UUID" />
+            app:argType="long" />
+        <action
+            android:id="@+id/returnToLanding"
+            app:destination="@id/LandingFragment" />
     </fragment>
 </navigation>

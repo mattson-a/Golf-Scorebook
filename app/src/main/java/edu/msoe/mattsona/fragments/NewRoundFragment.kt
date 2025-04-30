@@ -9,17 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
-import edu.msoe.mattsona.GolfRepository
 import edu.msoe.mattsona.GolfViewModel
 import edu.msoe.mattsona.databinding.FragmentNewRoundBinding
-import edu.msoe.mattsona.entities.Round
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import java.util.UUID
 
 class NewRoundFragment : Fragment() {
     private var _binding: FragmentNewRoundBinding? = null
@@ -29,7 +25,6 @@ class NewRoundFragment : Fragment() {
         }
 
     private val viewmodel: GolfViewModel by viewModels()
-    private val repository = GolfRepository.get()
     private var selectedDate: Date? = null
 
     override fun onCreateView(
@@ -68,24 +63,17 @@ class NewRoundFragment : Fragment() {
 
         binding.createRoundButton.setOnClickListener {
             if (validateFields()) {
-                var roundId: UUID? = null
                 lifecycleScope.launch {
                     //save new round to db
-                    if (!viewmodel.courseExists(binding.courseInput.text.toString())) {
+                    var courseId: Long? = viewmodel.courseExists(binding.courseInput.text.toString())
+                    if (courseId == null) {
                         //need to add course to db
-                        viewmodel.createNewCourse(binding.courseInput.text.toString())
+                        courseId = viewmodel.createNewCourse(binding.courseInput.text.toString())
                     }
-                    val courseId = repository.getCourseByName(binding.courseInput.text.toString()).id
-                    roundId = viewmodel.createNewRound(courseId, selectedDate!!, getSelectedHoles())
-                }
-                //wait until roundId is populated
-                while (roundId == null) {
-                    continue
-                }
+                    val roundId = viewmodel.createNewRound(courseId, selectedDate!!, getSelectedHoles())
 
-                findNavController().navigate(NewRoundFragmentDirections.goToRoundScoring(roundId!!))
-//                Snackbar.make(requireView(), "Round was added to the Database!", Snackbar.LENGTH_LONG).show()
-//                findNavController().navigate(NewRoundFragmentDirections.returnToLanding())
+                    findNavController().navigate(NewRoundFragmentDirections.goToRoundScoring(roundId))
+                }
             }
         }
 

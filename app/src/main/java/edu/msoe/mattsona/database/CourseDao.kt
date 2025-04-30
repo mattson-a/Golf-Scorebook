@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import edu.msoe.mattsona.entities.Course
-import java.util.UUID
 
 @Dao
 interface CourseDao {
@@ -13,11 +12,11 @@ interface CourseDao {
     suspend fun getAllCourses() : List<Course>
 
     @Query("select * from course where id=(:id)")
-    suspend fun getCourse(id: UUID): Course
+    suspend fun getCourse(id: Long): Course
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCourse(course: Course)
+    suspend fun insertCourse(course: Course): Long
 
-    @Query("select distinct * from course where name=(:courseName)")
-    suspend fun getCourseByName(courseName: String): Course
+    @Query("delete from course")
+    suspend fun deleteAllCourses()
 }

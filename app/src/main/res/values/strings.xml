@@ -6,4 +6,5 @@
     <string name="default_course">Royal St. Patrick\'s Golf Links</string>
     <string name="default_tees">Purple</string>
     <string name="create_round">Create Round</string>
+    <string name="round_scoring">Round Scoring</string>
 </resources>

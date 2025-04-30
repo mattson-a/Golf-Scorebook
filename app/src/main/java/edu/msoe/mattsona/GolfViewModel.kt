@@ -4,59 +4,45 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import edu.msoe.mattsona.entities.Course
+import edu.msoe.mattsona.entities.HoleStatistic
 import edu.msoe.mattsona.entities.Round
 import kotlinx.coroutines.launch
 import java.util.Date
-import java.util.UUID
 
 class GolfViewModel(application: Application): AndroidViewModel(application) {
-    private var uuidSeed: Int = 0
     private val repository = GolfRepository.get()
 
-    private fun getNextUUID(): UUID {
-        return uuidFromInt(uuidSeed++)
-    }
-
-    private fun uuidFromInt(value: Int, useAsMostSignificantBits: Boolean = false): UUID {
-        val longValue = value.toLong()
-        val mostSignificantBits = if (useAsMostSignificantBits) longValue else 0L
-        val leastSignificantBits = if (!useAsMostSignificantBits) longValue else 0L
-        return UUID(mostSignificantBits, leastSignificantBits)
+    /**
+     * Creates a new round and returns the Long for the newly created round
+     */
+    suspend fun createNewRound(courseId: Long, date: Date, holesPlayed: Int) : Long {
+        val newRound = Round(courseId = courseId, date = date, holes = holesPlayed)
+        return repository.insertRound(newRound)
     }
 
     /**
-     * Creates a new round and returns the UUID for the newly created round
+     * Function will test to see if given course name exists in the DB - useful for manual input version (v1.0)
+     * Returns: Long of CourseID if course is found, null if not found
      */
-    fun createNewRound(courseId: UUID, date: Date, holesPlayed: Int) : UUID {
-        val newRound = Round(getNextUUID(), courseId, date, holesPlayed)
-        viewModelScope.launch {
-            repository.insertRound(newRound)
-        }
-
-        return newRound.id
-    }
-
-    fun courseExists(courseName: String) : Boolean {
-        var courses: List<Course> = emptyList()
-        viewModelScope.launch {
-            courses = repository.getAllCourses()
-        }
+    suspend fun courseExists(courseName: String) : Long? {
+        val courses = repository.getAllCourses()
 
         if (courses.isNotEmpty()) {
             for (c in courses) {
                 if (c.name == courseName) {
-                    return true
+                    return c.id
                 }
             }
         }
-        return false
+        return null
     }
 
-    fun createNewCourse(courseName: String) {
-        val newCourse = Course(getNextUUID(), courseName)
-        viewModelScope.launch {
-            repository.insertCourse(newCourse)
-        }
+    /**
+     * Function creates a new course object in the db and returns the respective new ID of the course
+     */
+    suspend fun createNewCourse(courseName: String): Long {
+        val newCourse = Course(name = courseName)
+        return repository.insertCourse(newCourse)
     }
 
     suspend fun getAllCourses(): List<Course> {
@@ -67,11 +53,27 @@ class GolfViewModel(application: Application): AndroidViewModel(application) {
         return repository.getAllRounds()
     }
 
-//    init {
-//        //load test data
-//        viewModelScope.launch {
-//            repository.clearDb()
-//            repository.loadData()
-//        }
-//    }
+    suspend fun getRound(id: Long): Round {
+        return repository.getRound(id)
+    }
+
+    suspend fun getCourse(id: Long): Course {
+        return repository.getCourse(id)
+    }
+
+    fun insertHoleStatistics(statistics: List<HoleStatistic>) {
+        viewModelScope.launch {
+            repository.insertHoleStatistics(statistics)
+        }
+    }
+
+    fun clearDb() {
+        viewModelScope.launch {
+            repository.clearDb()
+        }
+    }
+
+    suspend fun getRoundStatistics(roundId: Long): List<HoleStatistic> {
+        return repository.getRoundStatistics(roundId)
+    }
 }

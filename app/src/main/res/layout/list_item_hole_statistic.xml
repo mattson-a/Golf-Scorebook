@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/holeText"
+        android:layout_width="90dp"
+        android:layout_height="45dp"
+        android:gravity="center_vertical"
+        android:text="Hole 18:"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/parText"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:gravity="center_vertical"
+        android:labelFor="@id/parDropdown"
+        android:text="Par:"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@id/holeText"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/parDropdown"
+        android:layout_width="75dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="5dp"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toEndOf="@+id/parText"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/scoreText"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_marginStart="5dp"
+        android:gravity="center_vertical"
+        android:text="Score:"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/parDropdown"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/scoreInput"
+        android:layout_width="60dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="5dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:gravity="center_vertical"
+        android:hint="Score"
+        android:inputType="number"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@id/scoreText"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

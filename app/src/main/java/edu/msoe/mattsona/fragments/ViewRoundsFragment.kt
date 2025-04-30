@@ -37,8 +37,12 @@ class ViewRoundsFragment : Fragment() {
 
         lifecycleScope.launch {
             val rounds = viewmodel.getAllRounds()
+            if (rounds.isEmpty()) {
+                val text = "No Rounds Found."
+                binding.textView.text = text
+            }
             val courseNameMap = viewmodel.getAllCourses().associate {it.id to it.name}
-            binding.roundRecycler.adapter = RoundListAdapter(rounds, courseNameMap)
+            binding.roundRecycler.adapter = RoundListAdapter(rounds.sortedBy {it.date}, courseNameMap)
         }
     }
 }
