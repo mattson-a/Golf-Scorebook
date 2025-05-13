@@ -152,6 +152,17 @@ class ViewStatsFragment : Fragment() {
             }
 
             binding.topCourses.text = topCoursesString.trim()
+
+            val parPlusPercent = calculateParOrBetterPercent()
+            var parPercentText = ""
+
+            if (parPlusPercent != -1.0) {
+                parPercentText = "${String.format(Locale.getDefault(),"%.2f", parPlusPercent)}%"
+            } else {
+                parPercentText = "N/A"
+            }
+
+            binding.parOrBetterPercent.text = parPercentText
         }
 
         return binding.root
@@ -184,5 +195,27 @@ class ViewStatsFragment : Fragment() {
             //score < roundPar
             "-${roundPar-score}"
         }
+    }
+
+    private suspend fun calculateParOrBetterPercent() : Double {
+        val rounds = viewmodel.getAllRounds()
+        var parOrBetterCount = 0
+        var totalHolesPlayed = 0
+
+        for (round in rounds) {
+            val holes = viewmodel.getRoundStatistics(round.id)
+
+            for (hole in holes) {
+                if (hole.holePar != null && hole.holeScore != null) {
+                    //"played" hole
+                    if (hole.holePar!! >= hole.holeScore!!) {
+                        parOrBetterCount++
+                    }
+                    totalHolesPlayed++
+                }
+            }
+        }
+
+        return if (totalHolesPlayed > 0) (parOrBetterCount.toDouble() / totalHolesPlayed) * 100 else -1.0
     }
 }
