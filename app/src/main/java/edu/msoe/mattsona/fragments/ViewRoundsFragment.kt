@@ -46,7 +46,7 @@ class ViewRoundsFragment : Fragment() {
             val courseNameMap = viewmodel.getAllCourses().associate {it.id to it.name}
 
             adapter = RoundListAdapter(rounds.sortedByDescending {it.date}, courseNameMap) { roundId ->
-                findNavController().navigate(ViewRoundsFragmentDirections.editSelectedRound(roundId))
+                findNavController().navigate(ViewRoundsFragmentDirections.viewRoundOverview(roundId))
             }
 
             binding.roundRecycler.adapter = adapter

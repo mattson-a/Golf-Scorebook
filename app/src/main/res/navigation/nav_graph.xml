@@ -29,8 +29,8 @@
         android:id="@+id/ViewRoundsFragment"
         android:name="edu.msoe.mattsona.fragments.ViewRoundsFragment" >
         <action
-            android:id="@+id/editSelectedRound"
-            app:destination="@id/RoundScoringFragment" />
+            android:id="@+id/viewRoundOverview"
+            app:destination="@id/roundOverviewFragment" />
     </fragment>
     <fragment
         android:id="@+id/ViewStatsFragment"
@@ -44,5 +44,16 @@
         <action
             android:id="@+id/returnToLanding"
             app:destination="@id/LandingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/roundOverviewFragment"
+        android:name="edu.msoe.mattsona.fragments.RoundOverviewFragment"
+        android:label="RoundOverviewFragment" >
+        <action
+            android:id="@+id/editSelectedRound"
+            app:destination="@id/RoundScoringFragment" />
+        <argument
+            android:name="roundId"
+            app:argType="long" />
     </fragment>
 </navigation>
