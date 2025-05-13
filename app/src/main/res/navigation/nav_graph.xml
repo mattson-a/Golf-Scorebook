@@ -27,7 +27,11 @@
     </fragment>
     <fragment
         android:id="@+id/ViewRoundsFragment"
-        android:name="edu.msoe.mattsona.fragments.ViewRoundsFragment" />
+        android:name="edu.msoe.mattsona.fragments.ViewRoundsFragment" >
+        <action
+            android:id="@+id/editSelectedRound"
+            app:destination="@id/RoundScoringFragment" />
+    </fragment>
     <fragment
         android:id="@+id/ViewStatsFragment"
         android:name="edu.msoe.mattsona.fragments.ViewStatsFragment" />

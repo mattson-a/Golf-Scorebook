@@ -70,4 +70,8 @@ class GolfRepository private constructor(context: Context) {
     suspend fun getRoundStatistics(roundId: Long): List<HoleStatistic> {
         return database.statisticsDao().getRoundStatistics(roundId)
     }
+
+    suspend fun isDbEmpty(): Boolean {
+        return database.courseDao().count() == 0 && database.statisticsDao().count() == 0 && database.roundDao().count() == 0
+    }
 }

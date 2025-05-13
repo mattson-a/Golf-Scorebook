@@ -16,4 +16,7 @@ interface HoleStatisticDao {
 
     @Query("delete from holestatistic")
     suspend fun deleteAllStatistics()
+
+    @Query("select count(*) from holestatistic")
+    suspend fun count(): Int
 }

@@ -11,12 +11,16 @@ import java.util.Locale
 class RoundHolder(
     private val binding: ListItemRoundBinding
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(round: Round, courseName: String) {
+    fun bind(round: Round, courseName: String, onRoundClicked: (roundId: Long) -> Unit) {
         //if (round != null) {
         val dateFormat = SimpleDateFormat("M/d/yyyy", Locale.getDefault())
 
         val detailText = "$courseName | ${dateFormat.format(round.date)} | ${round.holes} Holes"
         binding.roundDetails.text = detailText
+
+        binding.roundDetails.setOnClickListener {
+            onRoundClicked(round.id)
+        }
         /*} else {
             //no rounds, give appropriate message
             val detailText = "No Rounds Found. Create a New Round First!"
@@ -27,7 +31,8 @@ class RoundHolder(
 
 class RoundListAdapter(
     private val rounds: List<Round>,
-    private val coursesMap: Map<Long, String>
+    private val coursesMap: Map<Long, String>,
+    private val onRoundClicked: (roundId: Long) -> Unit
 ) : RecyclerView.Adapter<RoundHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoundHolder {
@@ -40,7 +45,9 @@ class RoundListAdapter(
         if (rounds.isNotEmpty()) {
             val round = rounds[position]
             val course = coursesMap[round.courseId]
-            holder.bind(round, course!!)
+            holder.bind(round, course!!) { roundId ->
+                onRoundClicked(roundId)
+            }
         }/* else {
             //no rounds
             holder.bind(null, "")

@@ -22,4 +22,7 @@ interface RoundDao {
 
     @Query("delete from round")
     suspend fun deleteAllRounds()
+
+    @Query("select count(*) from round")
+    suspend fun count(): Int
 }

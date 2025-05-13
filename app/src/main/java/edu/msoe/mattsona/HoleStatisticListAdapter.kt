@@ -37,8 +37,17 @@ class HoleStatisticHolder(
             }
         }
 
+        if (hole.holePar != null) {
+            binding.parDropdown.setSelection(hole.holePar!!-3) //-3 because possiblePars array is { 3, 4, 5 } so 3-3 = index 0, etc.
+        }
+
         val holeText = "Hole ${hole.holeNumber}: "
         binding.holeText.text = holeText
+
+        if (hole.holeScore != null) {
+            val scoreText = "${hole.holeScore!!}"
+            binding.scoreInput.setText(scoreText)
+        }
 
         binding.scoreInput.doOnTextChanged { text, _, _, _ ->
             if (text.toString().isEmpty()) {

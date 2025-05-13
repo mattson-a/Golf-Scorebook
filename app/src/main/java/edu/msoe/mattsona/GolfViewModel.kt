@@ -1,16 +1,23 @@
 package edu.msoe.mattsona
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import edu.msoe.mattsona.entities.Course
 import edu.msoe.mattsona.entities.HoleStatistic
 import edu.msoe.mattsona.entities.Round
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 class GolfViewModel(application: Application): AndroidViewModel(application) {
     private val repository = GolfRepository.get()
+    private val courseLock = Mutex()
 
     /**
      * Creates a new round and returns the Long for the newly created round
@@ -75,5 +82,75 @@ class GolfViewModel(application: Application): AndroidViewModel(application) {
 
     suspend fun getRoundStatistics(roundId: Long): List<HoleStatistic> {
         return repository.getRoundStatistics(roundId)
+    }
+
+    /**
+     * This function prepares and imports sample data into the database, containing sample rounds, courses, and statistics
+     */
+    fun prepareSampleData(roundData: Array<String>) {
+        for (round in roundData) {
+            try {
+                val data = round.split("|") //obtaining the data for a single row entry
+
+                //clean data
+                val dateStr = data[0].trim()
+                val courseName = data[1].trim()
+                val holes = data[2].trim().toInt()
+                val stats = data[3].trim().split(",")
+
+                //derive data
+                val formatter = SimpleDateFormat("M/d/yyyy", Locale.getDefault())
+                val date = formatter.parse(dateStr)
+
+                //save new round to db
+                viewModelScope.launch {
+                    var courseId: Long?
+
+                    courseLock.withLock {
+                        courseId = courseExists(courseName)
+                        if (courseId == null) {
+                            courseId = createNewCourse(courseName)
+                        }
+                    }
+                    val roundId = createNewRound(courseId!!, date!!, holes)
+
+                    //build holeStatistic objects for the round
+                    val holeStatistics: MutableList<HoleStatistic> = emptyList<HoleStatistic>().toMutableList()
+                    var holeNum = 1
+
+                    for (hole in stats) {
+                        //hole is "par:score"
+                        val scoring = hole.split(":")
+                        val par = scoring[0].toInt()
+                        val score = scoring[1].toInt()
+                        holeStatistics.add(HoleStatistic(roundId=roundId, holeNumber=holeNum++, holePar=par, holeScore=score))
+                    }
+
+                    //save holeStatistics to db
+                    insertHoleStatistics(holeStatistics)
+                }
+            } catch (e: ParseException) {
+                Log.d("GolfViewModel", "Failed to parse the given date string")
+                continue
+            }
+        }
+    }
+
+    suspend fun dbIsEmpty(): Boolean {
+        return repository.isDbEmpty()
+    }
+
+    /**
+     * This function calculates the total score of a round given the roundId.
+     * Returns: an Int of the calculated total score or -1 if any hole score is left blank (null) and therefore a score cannot be calculated.
+     */
+    suspend fun calculateTotalScore(roundId: Long): Int {
+        val holeStats = getRoundStatistics(roundId)
+
+        holeStats.forEach { hole ->
+            if (hole.holeScore == null) return -1
+        }
+
+        return holeStats.sumOf { it.holeScore!! }
     }
 }

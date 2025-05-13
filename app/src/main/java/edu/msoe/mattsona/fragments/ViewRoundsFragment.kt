@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import edu.msoe.mattsona.GolfViewModel
 import edu.msoe.mattsona.RoundListAdapter
@@ -21,6 +22,7 @@ class ViewRoundsFragment : Fragment() {
         }
 
     private val viewmodel: GolfViewModel by viewModels()
+    private lateinit var adapter: RoundListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,7 +44,12 @@ class ViewRoundsFragment : Fragment() {
                 binding.textView.text = text
             }
             val courseNameMap = viewmodel.getAllCourses().associate {it.id to it.name}
-            binding.roundRecycler.adapter = RoundListAdapter(rounds.sortedBy {it.date}, courseNameMap)
+
+            adapter = RoundListAdapter(rounds.sortedByDescending {it.date}, courseNameMap) { roundId ->
+                findNavController().navigate(ViewRoundsFragmentDirections.editSelectedRound(roundId))
+            }
+
+            binding.roundRecycler.adapter = adapter
         }
     }
 }

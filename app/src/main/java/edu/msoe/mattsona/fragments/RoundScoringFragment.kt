@@ -44,13 +44,16 @@ class RoundScoringFragment : Fragment() {
 
         lifecycleScope.launch {
             val currentRound = viewmodel.getRound(args.roundId)
-            val holeStatistics = mutableListOf<HoleStatistic>()
             val possiblePars = resources.getIntArray(R.array.possibleHolePars).asList()
+            val holeStatistics = viewmodel.getRoundStatistics(args.roundId).toMutableList()
 
-            for (i in 1..currentRound.holes) {
-                //create "holes" many holeStatistic objects for our recycler for user input
-                val hole = HoleStatistic(roundId = currentRound.id, holeNumber = i, holePar = null, holeScore = null)
-                holeStatistics.add(hole)
+            //check if this is a new round
+            if (holeStatistics.isEmpty()) {
+                for (i in 1..currentRound.holes) {
+                    //create "holes" many holeStatistic objects for our recycler for user input
+                    val hole = HoleStatistic(roundId = currentRound.id, holeNumber = i, holePar = null, holeScore = null)
+                    holeStatistics.add(hole)
+                }
             }
 
             binding.holeRecycler.adapter = HoleStatisticListAdapter(holeStatistics, possiblePars)
